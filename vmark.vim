@@ -18,11 +18,11 @@
 "   Copy vmark.vim to .vim/plugin directory
 "
 " Configuration:
-"     b:vm_maxmarks - Max number of bookmarks allowed in a buffer
-"     b:vm_guifg    - Foreground color for bookmarked line in GVIM
-"     b:vm_guibg    - Background color for bookmarked line in GVIM
-"     b:vm_ctermfg  - Foreground color for bookmarked line in VIM
-"     b:vm_ctermbg  - Background color for bookmarked line in VIM
+"     g:vm_maxmarks - Max number of bookmarks allowed in a buffer
+"     g:vm_guifg    - Foreground color for bookmarked line in GVIM
+"     g:vm_guibg    - Background color for bookmarked line in GVIM
+"     g:vm_ctermfg  - Foreground color for bookmarked line in VIM
+"     g:vm_ctermbg  - Background color for bookmarked line in VIM
 "
 " Limitation:
 "   If syntax highlighting based on keywords is turned on and the line being
@@ -52,7 +52,7 @@ function! s:VMarkSet(lineno)
     else
         if empty(b:vm_availablemarks)
             echo "Max number of bookmarks reached. ".
-                \"Increase b:vm_maxmarks in plugin/vmark.vim"
+                \"Increase g:vm_maxmarks in plugin/vmark.vim"
         else
             call add(b:vm_markedlines, a:lineno)
             call sort(b:vm_markedlines, "s:NumComparator")
@@ -166,12 +166,36 @@ function! <SID>VMarkPrevious()
     call cursor(curline, 1)
 endfunction
 
+" Global init
+function! s:GlobalInitVMark()
+    " Color name prefix
+    if !exists("g:vm_colorprefix")
+        let g:vm_colorprefix = 'VMarkColor'
+    endif
+    " Max number of bookmarks allowed in a buffer
+    if !exists("g:vm_maxmarks")
+        let g:vm_maxmarks = 50
+    endif
+    " Foreground color for the bookmarked line in GVIM
+    if !exists("g:vm_guifg")
+        let g:vm_guifg = 'white'
+    endif
+    " Background color for the bookmarked line in GVIM
+    if !exists("g:vm_guibg")
+        let g:vm_guibg = 'red'
+    endif
+    " Foreground color for the bookmarked line in VIM
+    if !exists("g:vm_ctermfg")
+        let g:vm_ctermfg = 'black'
+    endif
+    " Background color for the bookmarked line in VIM
+    if !exists("g:vm_ctermbg")
+        let g:vm_ctermbg = 'yellow'
+    endif
+endfunction
+
 " Initialize variables
 function! s:InitVMarkVariables()
-    " Color name prefix
-    if !exists("b:vm_colorprefix")
-        let b:vm_colorprefix = 'VMarkColor'
-    endif
     " Bookmarked line numbers
     if !exists("b:vm_markedlines")
         let b:vm_markedlines = []
@@ -188,35 +212,15 @@ function! s:InitVMarkVariables()
     if !exists("b:vm_linecolormapping")
         let b:vm_linecolormapping = {}
     endif
-    " Max number of bookmarks allowed in a buffer
-    if !exists("b:vm_maxmarks")
-        let b:vm_maxmarks = 50
-    endif
-    " Foreground color for the bookmarked line in GVIM
-    if !exists("b:vm_guifg")
-        let b:vm_guifg = 'white'
-    endif
-    " Background color for the bookmarked line in GVIM
-    if !exists("b:vm_guibg")
-        let b:vm_guibg = 'red'
-    endif
-    " Foreground color for the bookmarked line in VIM
-    if !exists("b:vm_ctermfg")
-        let b:vm_ctermfg = 'black'
-    endif
-    " Background color for the bookmarked line in VIM
-    if !exists("b:vm_ctermbg")
-        let b:vm_ctermbg = 'yellow'
-    endif
     " Available bookmarks
     if !exists("b:vm_availablemarks")
         let b:vm_availablemarks = []
         let idx = 0
-        while idx < b:vm_maxmarks
-            call add(b:vm_availablemarks, b:vm_colorprefix.idx)
-            exec 'hi '. b:vm_colorprefix . idx .
-                \ ' guifg=' . b:vm_guifg . ' guibg=' . b:vm_guibg .
-                \ ' ctermfg=' . b:vm_ctermfg . ' ctermbg=' . b:vm_ctermbg
+        while idx < g:vm_maxmarks
+            call add(b:vm_availablemarks, g:vm_colorprefix.idx)
+            exec 'hi '. g:vm_colorprefix . idx .
+                \ ' guifg=' . g:vm_guifg . ' guibg=' . g:vm_guibg .
+                \ ' ctermfg=' . g:vm_ctermfg . ' ctermbg=' . g:vm_ctermbg
             let idx = idx + 1
         endwhile
     endif
@@ -244,14 +248,28 @@ function! s:NumComparator(i1, i2)
 endfunction
 
 " Key mappings
-nnoremap <silent> mm :call <sid>VMarkToggle()<cr>
-nnoremap <silent> mn :call <sid>VMarkNext()<cr>
-nnoremap <silent> <F2> :call <sid>VMarkNext()<cr>
-nnoremap <silent> mp :call <sid>VMarkPrevious()<cr>
-nnoremap <silent> <F3> :call <sid>VMarkPrevious()<cr>
-nnoremap <silent> ma :call <sid>VMarkClearAll()<cr>
+if !hasmapto('<Plug>VMarkToggle')
+	nmap <silent> <unique> mm :call <Plug>VMarkToggle<cr>
+endif
+if !hasmapto('<Plug>VMarkNext')
+	nnoremap <silent> <unique> mn :call <Plug>VMarkNext<cr>
+	nnoremap <silent> <unique> <F2> :call <Plug>VMarkNext<cr>
+endif
+if !hasmapto('<Plug>VMarkPrevious')
+	nnoremap <silent> <unique> mp :call <Plug>VMarkPrevious<cr>
+	nnoremap <silent> <unique> <F3> :call <Plug>VMarkPrevious<cr>
+endif
+if !hasmapto('<Plug>VMarkClearAll')
+	nnoremap <silent> ma :call <Plug>VMarkClearAll<cr>
+endif
+
+nnoremap <Plug>VMarkToggle :call <sid>VMarkToggle()<cr>
+nnoremap <Plug>VMarkNext :call <sid>VMarkNext()<cr>
+nnoremap <Plug>VMarkPrevious :call <sid>VMarkPrevious()<cr>
+nnoremap <Plug>VMarkClearAll :call <sid>VMarkClearAll()<cr>
 
 " Initialization
+call s:GlobalInitVMark()
 call s:InitVMarkVariables()
 
 " Highlight all marked lines when a buffer is loaded
