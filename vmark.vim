@@ -249,18 +249,18 @@ endfunction
 
 " Key mappings
 if !hasmapto('<Plug>VMarkToggle')
-	nmap <silent> <unique> mm :call <Plug>VMarkToggle<cr>
+	nmap <silent> <unique> ,mm :call <Plug>VMarkToggle<cr>
 endif
 if !hasmapto('<Plug>VMarkNext')
-	nnoremap <silent> <unique> mn :call <Plug>VMarkNext<cr>
+	nnoremap <silent> <unique> ,mn :call <Plug>VMarkNext<cr>
 	nnoremap <silent> <unique> <F2> :call <Plug>VMarkNext<cr>
 endif
 if !hasmapto('<Plug>VMarkPrevious')
-	nnoremap <silent> <unique> mp :call <Plug>VMarkPrevious<cr>
+	nnoremap <silent> <unique> ,mN :call <Plug>VMarkPrevious<cr>
 	nnoremap <silent> <unique> <F3> :call <Plug>VMarkPrevious<cr>
 endif
 if !hasmapto('<Plug>VMarkClearAll')
-	nnoremap <silent> ma :call <Plug>VMarkClearAll<cr>
+	nnoremap <silent> ,mc :call <Plug>VMarkClearAll<cr>
 endif
 
 nnoremap <Plug>VMarkToggle :call <sid>VMarkToggle()<cr>
