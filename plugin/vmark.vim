@@ -1,6 +1,6 @@
 " File: vmark.vim
 " Author: Michael Zhou <michael.zhou@gmail.com>
-" Version: 1.2
+" Version: 1.3
 " Last Modified: Wed Jun 13 17:07:08 EDT 2012
 " Description: Toggle visual bookmarks and jump through bookmarks
 " Uasge:
