@@ -33,6 +33,8 @@
 "   Took cues from Amit Sethi's highlight.vim
 "   http://www.vim.org/scripts/script.php?script_id=1599
 "
+"   Serpent7776 made improvements to the original plugin
+"   https://github.com/serpent7776
 
 " Toggle bookmark on current line
 function! <SID>VMarkToggle()
